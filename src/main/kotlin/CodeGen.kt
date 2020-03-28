@@ -67,7 +67,7 @@ class CodeGen : AnAction() {
                     }
             } catch (e: IOException) {
                 Messages.showMessageDialog(
-                    "load codeGen agent in plugin `orm code gen` fail",
+                     e.message,
                     "Error",
                     Messages.getErrorIcon()
                 );
