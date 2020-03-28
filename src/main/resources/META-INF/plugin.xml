@@ -1,0 +1,32 @@
+<idea-plugin>
+    <id>com.yuzd.codegen.ktorm</id>
+    <name>orm生成器</name>
+    <vendor email="1877682825@qq.com" url="https://github.com/yuzd">yuzd</vendor>
+
+    <description><![CDATA[
+      <p><a href="https://github.com/yuzd">GitHub</a></p>
+      <br>
+      <p>This plugin helps you to generate dbmodels code for ktorm or antdata orm .</p>
+      <ul>
+        <li>Ktorm</li>
+        <li>AntData</li>
+      </ul>
+    ]]></description>
+    
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="ktorm.codegen"
+                icon="/icons/ktrom.png"
+                class="CodeGen" text="OrmCodeGen" description="OrmCodeGen">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="FindUsages"/>
+        </action>
+    </actions>
+</idea-plugin>

@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.17'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.61'
+}
+
+group 'com.yuzd.codegen'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url 'https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-plugin-service' }
+    maven { url 'https://cache-redirector.jetbrains.com/repo1.maven.org/maven2' }
+    maven { url 'https://cache-redirector.jetbrains.com/jcenter.bintray.com' }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version '2019.3.4'
+}
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+patchPluginXml {
+    changeNotes """
+      orm codegen plugin<br>
+      <em>mysql and sqlserver</em>"""
+}

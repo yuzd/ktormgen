@@ -1,0 +1,10 @@
+out/
+.idea
+*.iml
+*.zip
+
+build/
+.gradle
+.sandbox
+gradle.properties
+src/main/resources/gen/
