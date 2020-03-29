@@ -11,8 +11,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.IconLoader
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -26,9 +25,12 @@ class CodeGen : AnAction() {
     // 项目图片
     private val CODEGEN = IconLoader.getIcon("/icons/ktrom.png")
     
+    @Volatile
+    private var ISRUN = false
+    
     //    PluginManager.getLogger().error("test");
     override fun actionPerformed(e: AnActionEvent) {
-
+        
         val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
         if (virtualFile.extension != "json") return;
         val jsonFilePath = virtualFile.path
@@ -85,33 +87,34 @@ class CodeGen : AnAction() {
         }
 
         val project = e.dataContext.getData(PlatformDataKeys.PROJECT)
+        ISRUN = true
         thread {
-            val pb = ProcessBuilder(exePath.toString(), jsonFilePath)
-            pb.redirectErrorStream(true);
+          
             var process: Process? = null
             var result = -1;
             var msg = "";
             try {
-                process = pb.start()//执行命令
-                result = process.waitFor() //等待codegen结果
-            } catch (e: Exception) {
-                //针对mac
-                if (e.message?.toLowerCase()?.contains("access denied")!!) {
-                    //赋予文件夹权限
-                    val cmd = ProcessBuilder("/bin/chmod", "-R", pluginPath, "777")
-                    val cmdr = cmd.start()
-                    if (cmdr.waitFor() == 0) {
-                        //成功
-                        process = pb.start()
-                        result = process.waitFor()
-                    } else {
-                        msg = e.message!!;
-                        PluginManager.getLogger().error(msg)
-                        result == -99;
+                if(ostype == OsCheck.OSType.MacOS){
+                    val bashFile = createTempScript(pluginPath,execFile,jsonFilePath)
+                    try {
+                        val pb = ProcessBuilder("bash", bashFile.toString())
+                        pb.inheritIO();
+                        process = pb.start()//执行命令
+                        result = process.waitFor() //等待codegen结果
+                    }finally {
+                        bashFile?.delete()
                     }
                 }else{
-                    PluginManager.getLogger().error(e)
+                    val pb = ProcessBuilder(exePath.toString(), jsonFilePath)
+                    pb.redirectErrorStream(true);
+                    process = pb.start()//执行命令
+                    result = process.waitFor() //等待codegen结果
                 }
+            } catch (e: Exception) {
+                msg = e.message!!;
+                result == -99;
+            }finally {
+                ISRUN = false;
             }
             ApplicationManager.getApplication().invokeLater {
                 when {
@@ -142,7 +145,7 @@ class CodeGen : AnAction() {
 
     override fun update(e: AnActionEvent) {
         val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE)
-        e.presentation.isVisible = virtualFile != null && "json" == virtualFile.extension
+        e.presentation.isVisible = !ISRUN && virtualFile != null && "json" == virtualFile.extension
     }
 
     private fun InputStream.readAll(): String {
@@ -152,6 +155,23 @@ class CodeGen : AnAction() {
             sb.append(sc.nextLine())
         }
         return sb.toString()
+    }
+
+    @Throws(IOException::class)
+    fun createTempScript(folder:String,fileName:String,json:String): File? {
+        val tempScript: File = File.createTempFile("genscript", null)
+        val streamWriter: Writer = OutputStreamWriter(
+            FileOutputStream(
+                tempScript
+            )
+        )
+        val printWriter = PrintWriter(streamWriter)
+        printWriter.println("#!/bin/bash")
+        printWriter.println("chmod -R 777 \"$folder\"")
+        printWriter.println("cd \"$folder\"")
+        printWriter.println("./$fileName \"$json\"")
+        printWriter.close()
+        return tempScript
     }
 
 }
