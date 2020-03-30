@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.yuzd.codegen.ktorm</id>
-    <name>orm生成器</name>
+    <name>OrmCodeGen</name>
     <vendor email="1877682825@qq.com" url="https://github.com/yuzd">yuzd</vendor>
 
     <description><![CDATA[
@@ -16,7 +16,7 @@
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-    <idea-version since-build="181.1" until-build="193.*"/>
+    <idea-version since-build="181.1"/>
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
     </extensions>
@@ -26,7 +26,8 @@
         <action id="ktorm.codegen"
                 icon="/icons/ktrom.png"
                 class="CodeGen" text="OrmCodeGen" description="OrmCodeGen">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="FindUsages"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
     </actions>
 </idea-plugin>

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.yuzd.codegen'
-version '1.2'
+version '1.5'
 
 sourceCompatibility = 1.8
 
@@ -31,6 +31,10 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+publishPlugin {
+    token "perm:eXV6ZA==.OTItMTk0Mg==.ebDZrjtTYL4RMYs3QajbZu4RtyW3d6"
 }
 patchPluginXml {
     changeNotes """
