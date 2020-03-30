@@ -28,7 +28,6 @@ class CodeGen : AnAction() {
     @Volatile
     private var ISRUN = false
     
-    //    PluginManager.getLogger().error("test");
     override fun actionPerformed(e: AnActionEvent) {
         
         val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
@@ -111,7 +110,7 @@ class CodeGen : AnAction() {
                     result = process.waitFor() //等待codegen结果
                 }
             } catch (e: Exception) {
-                msg = e.message!!;
+                msg = e.message?:"err";
                 result == -99;
             }finally {
                 ISRUN = false;
@@ -127,7 +126,7 @@ class CodeGen : AnAction() {
                     }
                     result != 0 -> {
                         msg = process?.inputStream?.readAll() ?: "orm codegen fail"
-                        PluginManager.getLogger().error(msg)
+//                        PluginManager.getLogger().error(msg)
                         val notice = NOTIFICATION_GROUP.createNotification(
                             msg,
                             NotificationType.ERROR
@@ -140,7 +139,7 @@ class CodeGen : AnAction() {
                     }
                 }
             }
-        }.start()
+        }
     }
 
     override fun update(e: AnActionEvent) {
@@ -149,12 +148,16 @@ class CodeGen : AnAction() {
     }
 
     private fun InputStream.readAll(): String {
-        val sc = Scanner(this)
-        val sb = StringBuffer()
-        while (sc.hasNext()) {
-            sb.append(sc.nextLine())
+        return try {
+            val sc = Scanner(this)
+            val sb = StringBuffer()
+            while (sc.hasNext()) {
+                sb.append(sc.nextLine())
+            }
+            sb.toString()
+        }catch (e:Exception){
+            e.message ?: "uncatch err";
         }
-        return sb.toString()
     }
 
     @Throws(IOException::class)
