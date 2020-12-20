@@ -5,7 +5,7 @@
 - Mysql
 - Sqlserver
 
-### 官方下载地址：https://plugins.jetbrains.com/plugin/14022
+### 官方下载地址：https://plugins.jetbrains.com/plugin/14033
 
 ### 如果插件在jetbrains下载失败可以试试从百度网盘 插件下载地址：
 链接：https://pan.baidu.com/s/1XQ8MMuglz1gU_x4Hjnn0wg 
