@@ -58,6 +58,7 @@
 Type | 支持 mysql 和 sqlserver (sqlserver的话支持在后面指定版本号：sqlserver2000, sqlserver2005,sqlserver2008,sqlserver2012,sqlserver2017，如果不指定的话 sqlserver = sqlserver2008)
 OutPutFolder| 生成的代码保存在本机的哪个文件夹(可以使用绝对路径和相对路径) 相对路径是相对于你选择的json文件 例如(../java)
 IsKotlin| 需要设置为true
+KtormVersionNew| 如果用的是新版本的ktorm的话需要设置为true(因为ktorm更改了namespace)
 NamespaceName| 指定 package 名称
 ConnectionString| db连接字符串
 TableFilter| 表名称的string数组，如果指定了只会生成特定的表的代码
