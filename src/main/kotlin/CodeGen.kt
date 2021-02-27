@@ -1,7 +1,5 @@
 import com.intellij.ide.plugins.PluginManager
-import com.intellij.notification.NotificationDisplayType
-import com.intellij.notification.NotificationGroup
-import com.intellij.notification.NotificationType
+import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -21,6 +19,10 @@ import kotlin.concurrent.thread
 class CodeGen : AnAction() {
     private val NOTIFICATION_GROUP = NotificationGroup("OrmCodeGen", NotificationDisplayType.BALLOON, true)
     private val log: Logger = Logger.getInstance("OrmCodeGen")
+    
+    init {
+        log.setLevel(org.apache.log4j.Level.DEBUG)
+    }
 
     // 项目图片
     private val CODEGEN = IconLoader.getIcon("/icons/ktrom.png")
@@ -84,7 +86,14 @@ class CodeGen : AnAction() {
             );
             return;
         }
-
+        Notifications.Bus.notify(
+            Notification(
+                "OrmCodeGen",
+                "Codegen Start",
+                "version:$version,$pluginPath",
+                NotificationType.INFORMATION
+            )
+        )
         val project = e.dataContext.getData(PlatformDataKeys.PROJECT)
         ISRUN = true
         thread {
@@ -134,7 +143,9 @@ class CodeGen : AnAction() {
                         notice.notify(project)
                     }
                     else -> {
-                        val notice = NOTIFICATION_GROUP.createNotification("orm codegen success", NotificationType.INFORMATION)
+                        
+                        
+                        val notice = NOTIFICATION_GROUP.createNotification("Codegen Success", NotificationType.INFORMATION)
                         notice.notify(project)
                     }
                 }
