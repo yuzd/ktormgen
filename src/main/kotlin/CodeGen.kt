@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.IconLoader
+import com.intellij.openapi.vfs.LocalFileSystem
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -147,6 +148,7 @@ class CodeGen : AnAction() {
                         
                         val notice = NOTIFICATION_GROUP.createNotification("Codegen Success", NotificationType.INFORMATION)
                         notice.notify(project)
+                        LocalFileSystem.getInstance().refresh(true);
                     }
                 }
             }
