@@ -48,7 +48,10 @@
   "IsKotlin": true,
   "NamespaceName": "DbModel",
   "ConnectionString": "Server=localhost;Port=53306;Database=antmgr;Uid=root;Pwd=123456;charset=utf8;SslMode=none",
-  "TableFilter": []
+  "TableFilter": [],
+  "SetFkList": [
+    "system_users,RoleTid,system_role,Tid"
+  ]
 }
 ```
 
@@ -61,8 +64,8 @@ IsKotlin| 需要设置为true
 KtormVersionNew| 如果用的是新版本的ktorm的话需要设置为true(因为ktorm更改了namespace)
 NamespaceName| 指定 package 名称
 ConnectionString| db连接字符串
-TableFilter| 表名称的string数组，如果指定了只会生成特定的表的代码
-
+TableFilter| 表名称的string数组，如果指定了只会生成特定的表的代码 ， system_% -》代表只生成system_开头的表
+SetFkList| 外键关系设置(可以是非物理的外键)有4个参数逗号隔开分别是，A表的哪个字段关联B表的哪个字段，关联关系是1:1
 
 ### 测试演示
 
@@ -83,29 +86,35 @@ dataBase的扩展方法，只需要拿到database 就可以拿到表对象进行
 
 
 ```kotlin
+   val database = Database.connect("jdbc:mysql://localhost:3306/antmgr?user=root&password=123456&useSSL=false",logger = ConsoleLogger(threshold = LogLevel.DEBUG ))
 
-val database = Database.connect("jdbc:mysql://localhost:3306/antmgr?user=root&password=123456")
+    //默认自动join是关闭的
+    val user = database.systemUsers.filter { it.Tid eq 2 }.firstOrNull()
+    println(user?.SystemRole)
+    //按照下面的方式开启自动join查询
+    val user2 =database.systemUsers.joinReferencesAndSelect().filter { it.Tid eq 2 }.firstOrNull()
+    println(user2?.SystemRole)
 
-//筛选
-val systemMenu = database.systemMenus.filter { (it.IsActive) and (it.Name eq "yuzd") }.firstOrNull()
-println(systemMenu)
+    //筛选
+    val systemMenu = database.systemMenus.filter { (it.IsActive) and (it.Name eq "yuzd") }.firstOrNull()
+    println(systemMenu)
 
-//新增
-database.systemMenus.insert {
-    set(it.Name, "test")
-    set(it.IsActive,false)
-}
+    //新增
+    database.systemMenus.insert {
+        set(it.Name, "test")
+        set(it.IsActive,false)
+    }
 
-//修改
-database.systemMenus.upgrade {
-    set(it.IsActive,true)
-    where { it.Name eq "test" }
-}
+    //修改
+    database.systemMenus.update {
+        set(it.IsActive,true)
+        where { it.Name eq "test" }
+    }
 
-//删除
-database.systemMenus.delete {
-    it.Name eq "test"
-}
+    //删除
+    database.systemMenus.delete {
+        it.Name eq "test"
+    }
 
 ```
 
@@ -114,4 +123,4 @@ database.systemMenus.delete {
 更多详细可以参考ktorm框架的文档
 https://www.ktorm.org/en/entities-and-column-binding.html
 
-![image](https://images4.c-ctrip.com/target/0zb09120008c5phf0D3E7.png)
+![image](https://images4.c-ctrip.com/target/0zb5d120008od7nor3A7E.png)
