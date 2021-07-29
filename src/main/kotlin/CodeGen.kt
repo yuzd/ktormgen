@@ -20,24 +20,24 @@ import kotlin.concurrent.thread
 class CodeGen : AnAction() {
     private val NOTIFICATION_GROUP = NotificationGroup("OrmCodeGen", NotificationDisplayType.BALLOON, true)
     private val log: Logger = Logger.getInstance("OrmCodeGen")
-    
+
     init {
         log.setLevel(org.apache.log4j.Level.DEBUG)
     }
 
     // 项目图片
     private val CODEGEN = IconLoader.getIcon("/icons/ktrom.png")
-    
+
     @Volatile
     private var ISRUN = false
-    
+
     override fun actionPerformed(e: AnActionEvent) {
-        
+
         val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
         if (virtualFile.extension != "json") return;
         val jsonFilePath = virtualFile.path
 
-        val genFolderURL = CodeGen::class.java.classLoader.getResource("/gen/version.txt")
+        val genFolderURL = CodeGen::class.java.classLoader.getResource("gen/version.txt")
         if (genFolderURL == null) {
             Messages.showMessageDialog(
                 "can not read version file in Resource",
@@ -65,13 +65,13 @@ class CodeGen : AnAction() {
         val exePath = Paths.get(pluginPath, execFile)
         if (!Files.exists(exePath)) {
             try {
-                CodeGen::class.java.classLoader.getResourceAsStream("/gen/$execFile")
+                CodeGen::class.java.classLoader.getResourceAsStream("gen/$execFile")
                     .use { stream ->
                         Files.copy(stream, exePath)
                     }
             } catch (e: IOException) {
                 Messages.showMessageDialog(
-                     e.message,
+                    e.message,
                     "Error",
                     Messages.getErrorIcon()
                 );
@@ -98,31 +98,31 @@ class CodeGen : AnAction() {
         val project = e.dataContext.getData(PlatformDataKeys.PROJECT)
         ISRUN = true
         thread {
-          
+
             var process: Process? = null
             var result = -1;
             var msg = "";
             try {
-                if(ostype == OsCheck.OSType.MacOS){
-                    val bashFile = createTempScript(pluginPath,execFile,jsonFilePath)
+                if (ostype == OsCheck.OSType.MacOS) {
+                    val bashFile = createTempScript(pluginPath, execFile, jsonFilePath)
                     try {
                         val pb = ProcessBuilder("bash", bashFile.toString())
                         pb.inheritIO();
                         process = pb.start()//执行命令
                         result = process.waitFor() //等待codegen结果
-                    }finally {
+                    } finally {
                         bashFile?.delete()
                     }
-                }else{
+                } else {
                     val pb = ProcessBuilder(exePath.toString(), jsonFilePath)
                     pb.redirectErrorStream(true);
                     process = pb.start()//执行命令
                     result = process.waitFor() //等待codegen结果
                 }
             } catch (e: Exception) {
-                msg = e.message?:"err";
+                msg = e.message ?: "err";
                 result == -99;
-            }finally {
+            } finally {
                 ISRUN = false;
             }
             ApplicationManager.getApplication().invokeLater {
@@ -144,9 +144,10 @@ class CodeGen : AnAction() {
                         notice.notify(project)
                     }
                     else -> {
-                        
-                        
-                        val notice = NOTIFICATION_GROUP.createNotification("Codegen Success", NotificationType.INFORMATION)
+
+
+                        val notice =
+                            NOTIFICATION_GROUP.createNotification("Codegen Success", NotificationType.INFORMATION)
                         notice.notify(project)
                         LocalFileSystem.getInstance().refresh(true);
                     }
@@ -168,13 +169,13 @@ class CodeGen : AnAction() {
                 sb.append(sc.nextLine())
             }
             sb.toString()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.message ?: "uncatch err";
         }
     }
 
     @Throws(IOException::class)
-    fun createTempScript(folder:String,fileName:String,json:String): File? {
+    fun createTempScript(folder: String, fileName: String, json: String): File? {
         val tempScript: File = File.createTempFile("genscript", null)
         val streamWriter: Writer = OutputStreamWriter(
             FileOutputStream(
