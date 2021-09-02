@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -36,7 +37,11 @@ class CodeGen : AnAction() {
         val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
         if (virtualFile.extension != "json") return;
         val jsonFilePath = virtualFile.path
-
+        val fileDocumentManager = FileDocumentManager.getInstance()
+        val document = fileDocumentManager.getDocument(virtualFile)
+        if (document != null) {
+            fileDocumentManager.saveDocument(document)
+        }
         val genFolderURL = CodeGen::class.java.classLoader.getResource("gen/version.txt")
         if (genFolderURL == null) {
             Messages.showMessageDialog(
