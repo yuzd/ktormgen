@@ -130,3 +130,14 @@ database.systemMenus.delete {
 https://www.ktorm.org/en/entities-and-column-binding.html
 
 ![image](https://images4.c-ctrip.com/target/0zb5d120008od7nor3A7E.png)
+
+### 2021-11-27
+优化遇到错误的信息展示
+
+![image](https://dimg04.c-ctrip.com/images/0v54712000958okfs31A2.png)
+
+支持sqlserver：
+由于在mac上的sqlserver依赖包大，所以支持sqlserver的版本请在百度网盘下载：
+
+链接：https://pan.baidu.com/s/16oSpkU7OoMW92qaxZedsYg 
+提取码：yuzd 
