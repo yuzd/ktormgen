@@ -107,13 +107,22 @@ class CodeGen : AnAction() {
             var process: Process? = null
             var result = -1;
             var msg = "";
+            val output = StringBuilder()
             try {
                 if (ostype == OsCheck.OSType.MacOS) {
                     val bashFile = createTempScript(pluginPath, execFile, jsonFilePath)
                     try {
                         val pb = ProcessBuilder("bash", bashFile.toString())
                         pb.inheritIO();
+                        pb.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                        pb.redirectErrorStream(true);
                         process = pb.start()//执行命令
+                        BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+                            var line = ""
+                            while (reader.readLine().also { line = it } != null) {
+                                output.appendln(line)
+                            }
+                        }
                         result = process.waitFor() //等待codegen结果
                     } finally {
                         bashFile?.delete()
@@ -140,8 +149,8 @@ class CodeGen : AnAction() {
                         notice.notify(project)
                     }
                     result != 0 -> {
-                        msg = process?.inputStream?.readAll() ?: "orm codegen fail"
-//                        PluginManager.getLogger().error(msg)
+                        if (ostype == OsCheck.OSType.MacOS) msg = output.toString()
+                        msg = msg.ifEmpty { process?.inputStream?.readAll() ?: "orm codegen fail" }
                         val notice = NOTIFICATION_GROUP.createNotification(
                             msg,
                             NotificationType.ERROR
