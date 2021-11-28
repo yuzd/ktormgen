@@ -137,7 +137,4 @@ https://www.ktorm.org/en/entities-and-column-binding.html
 ![image](https://dimg04.c-ctrip.com/images/0v54712000958okfs31A2.png)
 
 支持sqlserver：
-由于在mac上的sqlserver依赖包大，所以支持sqlserver的版本请在百度网盘下载：
-
-链接：https://pan.baidu.com/s/16oSpkU7OoMW92qaxZedsYg 
-提取码：yuzd 
+由于在mac上的sqlserver依赖包大，所以支持sqlserver的版本请在上述的百度网盘地址中下载
