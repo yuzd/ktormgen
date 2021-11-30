@@ -131,10 +131,10 @@ https://www.ktorm.org/en/entities-and-column-binding.html
 
 ![image](https://images4.c-ctrip.com/target/0zb5d120008od7nor3A7E.png)
 
-### 2021-11-27
-优化遇到错误的信息展示
+### 2021-11-27 Version2.4
+1. 优化遇到错误的信息展示
 
 ![image](https://dimg04.c-ctrip.com/images/0v54712000958okfs31A2.png)
 
-支持sqlserver：
-由于在mac上的sqlserver依赖包大，所以支持sqlserver的版本请在上述的百度网盘地址中下载
+2. 支持sqlserver
+
